@@ -3,8 +3,6 @@ import random
 
 train_data = "/home/trung/experiment_50_hardnegative_jp_llama2/vjdatabase/train_12x7_retrieval.json"
 
-
-# dev_data = "./validation_retrieval_ms_marco.json"
 corpus_data = "/home/trung/experiment_50_hardnegative_jp_llama2/vjdatabase/legal_corpus_12x7.json"
 
 corpus = json.load(open(corpus_data, encoding='utf-8'))

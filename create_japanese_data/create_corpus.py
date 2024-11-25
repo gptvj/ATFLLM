@@ -1,14 +1,15 @@
 import json
-import random
+import os
 
-corpus_data = "/home/trungquang/Japanese_retrieval_with_LLM_new_propose/vjdatabase/legal_corpus_12x7.json"
+corpus_data = "./vjdatabase/legal_corpus.json"
 
 corpus = json.load(open(corpus_data, encoding='utf-8'))
 
-# trước khi xử lý corpus
-print(len(corpus))
-print(corpus[0]['law_id'])
-print(len(corpus[0]['articles']))
+# # trước khi xử lý corpus
+# print("Sau khi xử lý corpus")
+# print(len(corpus))
+# print(corpus[0]['law_id'])
+# print(len(corpus[0]['articles']))
 
 # chuyển thành format mới như sau:
 # Dataset({
@@ -28,24 +29,29 @@ for law in corpus:
         data_new["title"].append(article['title'])
         data_new["text"].append(article['text'])
 
-print("Sau khi xử lý train")
-print(len(data_new["docid"]))
-print(data_new["docid"][0])
-print(data_new["title"][0])
-print(data_new["text"][0])
+# print("Sau khi xử lý train")
+# print(len(data_new["docid"]))
+# print(data_new["docid"][0])
+# print(data_new["title"][0])
+# print(data_new["text"][0])
 
 # Lưu lại dataset và load bằng load_dataset
 import datasets
 dataset = datasets.Dataset.from_dict(data_new)
 
+japanese_dataset_folder = "./japanese_datasets"
+if not os.path.exists(japanese_dataset_folder): 
+    os.makedirs(japanese_dataset_folder)
+    
 # Lưu lại dataset
-dataset.save_to_disk("./legal_corpus_retrieval_ja")
+dataset.save_to_disk(os.path.join(japanese_dataset_folder, "./legal_corpus_retrieval_ja"))
 
 # Load lại dataset
-dataset = datasets.load_from_disk("./legal_corpus_retrieval_ja")
+dataset = datasets.load_from_disk(os.path.join(japanese_dataset_folder, "./legal_corpus_retrieval_ja"))
 print(dataset)
+print(f'Create dataset successful at {os.path.join(japanese_dataset_folder, "legal_corpus_retrieval_ja")}')
 
-# print 1 dòng dữ liệu
-print(dataset['docid'][0])
-print(dataset['text'][0])
-print(dataset['title'][0])
+# # print 1 dòng dữ liệu
+# print(dataset['docid'][0])
+# print(dataset['text'][0])
+# print(dataset['title'][0])
