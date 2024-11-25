@@ -1,1 +1,5 @@
 datasets
+rank_bm25
+fugashi
+mecab-python3
+unidic-lite
