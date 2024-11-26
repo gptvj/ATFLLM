@@ -1,17 +1,26 @@
 import json
-import random
+import argparse
+from datasets import Dataset
 
-train_data = "/home/trungquang/EXPERIMENT_50_HARD_2BATCH_JAPANESE/vjdatabase/validation_12x7_retrieval.json"
-# dev_data = "./validation_retrieval_ms_marco.json"
-corpus_data = "/home/trungquang/EXPERIMENT_50_HARD_2BATCH_JAPANESE/vjdatabase/legal_corpus_12x7.json"
+# Argument parser
+parser = argparse.ArgumentParser(description="Process validation data for retrieval tasks.")
+parser.add_argument("--train_data", type=str, required=True, help="Path to the validation data JSON file.")
+parser.add_argument("--corpus_data", type=str, required=True, help="Path to the legal corpus JSON file.")
+parser.add_argument("--output_dir", type=str, required=True, help="Directory to save the processed dataset.")
+
+args = parser.parse_args()
+
+# Load data
+train_data = args.train_data
+corpus_data = args.corpus_data
+output_dir = args.output_dir
 
 corpus = json.load(open(corpus_data, encoding='utf-8'))
 data = json.load(open(train_data, encoding='utf-8'))
 
-print("Trước khi xử lý train")
-# print(data)
-print(len(data['items']))
-print(data['items'][0])
+print("Before processing validation data")
+print("Number of items:", len(data['items']))
+print("Sample item:", data['items'][0])
 
 def find_in_corpus(law_id, article_id):
     for item in corpus:
@@ -23,47 +32,40 @@ def find_in_corpus(law_id, article_id):
                         'title': article['title'],
                         'text': article['text']
                     }
+    return None
 
-# chuyển thành format mới như sau:
-# Dataset({
-#     features: ['query_id', 'query', 'positive_passages', 'negative_passages'],
-#     num_rows: 400782
-# })
+# Prepare the new dataset format
 data_new = {
     "query_id": [],
     "query": [],
     "positive_passages": []
 }
 
-# read file pickle chứa dữ liệu negative_passages
-import pickle
-
+# Convert the data
 query_id_count = 1
 for item in data['items']:
     data_new['query_id'].append(str(query_id_count))
     query_id_count += 1
     data_new['query'].append(item['question_full'])
     this_pos = []
-    for i in range(len(item['relevant_articles'])):
-        # print(item['relevant_articles'][i]['law_id'], item['relevant_articles'][i]['article_id'])
-        this_pos.append(find_in_corpus(item['relevant_articles'][i]['law_id'], item['relevant_articles'][i]['article_id']))
+    for relevant_article in item['relevant_articles']:
+        pos_passage = find_in_corpus(relevant_article['law_id'], relevant_article['article_id'])
+        if pos_passage:
+            this_pos.append(pos_passage)
     data_new['positive_passages'].append(this_pos)
 
-print("Sau khi xử lý train")
-print()
+print("After processing validation data")
 
-# Lưu lại dataset và load bằng load_dataset
-import datasets
-dataset = datasets.Dataset.from_dict(data_new)
+# Convert to Dataset object and save to disk
+dataset = Dataset.from_dict(data_new)
+dataset.save_to_disk(output_dir)
 
-# Lưu lại dataset
-dataset.save_to_disk("./validation_retrieval_ja")
-
-# Load lại dataset
-dataset = datasets.load_from_disk("./validation_retrieval_ja")
+# Load and verify the dataset
+dataset = Dataset.load_from_disk(output_dir)
+print("Loaded dataset:")
 print(dataset)
 
-# print 1 dòng dữ liệu
-print(dataset['query_id'][0])
-print(dataset['query'][0])
-print(dataset['positive_passages'][0])
+# Print a sample data point
+print("Query ID:", dataset['query_id'][0])
+print("Query:", dataset['query'][0])
+print("Positive Passages:", dataset['positive_passages'][0])
