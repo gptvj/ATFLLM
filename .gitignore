@@ -4,6 +4,7 @@ __pycache__/
 # Data
 vjdatabase/
 japanese_datasets/
+hard_negative_ja_round1_for_training_round2/
 
 # Model
 temp/

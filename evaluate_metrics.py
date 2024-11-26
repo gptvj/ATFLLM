@@ -1,13 +1,18 @@
 import datasets
 import numpy as np
+import argparse
 
-# init
-test_ds_path = "test_retrieval_ja"
-rank_txt_path = "/home/trung/EXPERIMENT_50_HARD_1BATCH_ROUND2_JP (BEST PROPOSE - ROUND2 USING LLM WITH JAPANESE)/rank_ensemble/merge_rank.txt"
-ks = [3, 5, 10, 20, 50, 100, 200]  # Danh sách các k cần tính precision và recall
+# Set up argument parsing
+parser = argparse.ArgumentParser(description='Evaluation script for retrieval metrics.')
+parser.add_argument('--test_ds_path', type=str, required=True, help='Path to the test dataset')
+parser.add_argument('--rank_txt_path', type=str, required=True, help='Path to the ranking text file')
+args = parser.parse_args()
 
-# Load lại test dataset
-test_ds = datasets.load_from_disk(test_ds_path)
+# Init
+ks = [3, 5, 10, 20, 50, 100, 200]  # List of k values for precision and recall calculation
+
+# Load the test dataset
+test_ds = datasets.load_from_disk(args.test_ds_path)
 
 query_relate = {}
 for i in range(len(test_ds['query_id'])):
@@ -16,8 +21,8 @@ for i in range(len(test_ds['query_id'])):
         query_relate[test_ds['query_id'][i]].append(pos['docid'])
 
 top10_predict = {}
-# load file rank.scifact.txt
-with open(rank_txt_path, "r") as f:
+# Load the rank file
+with open(args.rank_txt_path, "r") as f:
     lines = f.readlines()
     for line in lines:
         parts = line.strip().split("\t")
@@ -27,10 +32,10 @@ with open(rank_txt_path, "r") as f:
             top10_predict[query_id] = []
         top10_predict[query_id].append(doc_id)
 
-# Nhập giá trị u từ người dùng
-u = int(input("Nhập giá trị u để tính MRR@u và MAP@u: "))
+# Input u value for MRR@u and MAP@u calculation
+u = int(input("Enter the value of u to compute MRR@u and MAP@u: "))
 
-# Tính precision@k và recall@k với k thuộc {1, 3, 5, 10}
+# Calculate precision@k and recall@k for k in {1, 3, 5, 10}
 precisions = {k: 0 for k in ks}
 recalls = {k: 0 for k in ks}
 
@@ -52,14 +57,14 @@ for k in ks:
 print("Precisions@k: ", precisions)
 print("Recalls@k: ", recalls)
 
-# Tính MAP@u
+# Calculate MAP@u
 APs = []
 for query_id in top10_predict:
     positive_passages = query_relate[query_id]
     predict_passages = top10_predict[query_id]
     count_retrieval = 0
     sum_precision = 0
-    for i in range(min(u, len(predict_passages))):  # Chỉ xét top u dự đoán
+    for i in range(min(u, len(predict_passages))):  # Only consider top u predictions
         if predict_passages[i] in positive_passages:
             count_retrieval += 1
             sum_precision += count_retrieval / (i + 1)
@@ -68,12 +73,12 @@ for query_id in top10_predict:
 MAP = sum(APs) / len(APs)
 print(f"MAP@{u}: ", MAP)
 
-# Tính MRR@u
+# Calculate MRR@u
 MRRs = []
 for query_id in top10_predict:
     positive_passages = query_relate[query_id]
     predict_passages = top10_predict[query_id]
-    for i in range(min(u, len(predict_passages))):  # Chỉ xét top u dự đoán
+    for i in range(min(u, len(predict_passages))):  # Only consider top u predictions
         if predict_passages[i] in positive_passages:
             MRRs.append(1 / (i + 1))
             break
@@ -81,7 +86,7 @@ for query_id in top10_predict:
 MRR = sum(MRRs) / len(MRRs)
 print(f"MRR@{u}: ", MRR)
 
-# Tính my_recall chia cho giá trị nhỏ nhất của u và tổng số tài liệu liên quan
+# Calculate my_recall divided by the minimum of u and total number of relevant documents
 my_recalls = {k: 0 for k in ks}
 
 for query_id in top10_predict:
@@ -99,25 +104,25 @@ for k in ks:
 
 print("My_recalls@k: ", my_recalls)
 
-# Tính NDCG@10
+# Calculate NDCG@10
 ndcgs_10 = []
 for query_id in top10_predict:
     positive_passages = query_relate[query_id]
     predict_passages = top10_predict[query_id]
     dcg = 0.0
-    for i in range(min(10, len(predict_passages))):  # Chỉ xét top 10 dự đoán
+    for i in range(min(10, len(predict_passages))):  # Only consider top 10 predictions
         if predict_passages[i] in positive_passages:
-            relevance = 1  # Giả sử độ liên quan là 1 cho mỗi tài liệu liên quan
-            dcg += relevance / np.log2(i + 2)  # i+2 vì i bắt đầu từ 0
+            relevance = 1  # Assume relevance is 1 for each relevant document
+            dcg += relevance / np.log2(i + 2)  # i+2 because i starts from 0
 
-    # Tính IDCG@10 (DCG lý tưởng với các tài liệu liên quan được xếp hạng đầu tiên)
-    ideal_relevances = [1] * min(10, len(positive_passages))  # Các tài liệu liên quan lý tưởng đều có độ liên quan là 1
+    # Calculate IDCG@10 (Ideal DCG with relevant documents ranked first)
+    ideal_relevances = [1] * min(10, len(positive_passages))  # Relevant documents ideally have relevance 1
     idcg = sum([rel / np.log2(i + 2) for i, rel in enumerate(ideal_relevances)])
 
-    # Tính NDCG cho truy vấn hiện tại
+    # Calculate NDCG for the current query
     ndcg = dcg / idcg if idcg > 0 else 0
     ndcgs_10.append(ndcg)
 
-# Tính NDCG trung bình trên toàn bộ tập truy vấn
+# Calculate the average NDCG@10 across all queries
 avg_ndcg_10 = sum(ndcgs_10) / len(ndcgs_10)
 print("NDCG@10: ", avg_ndcg_10)
