@@ -42,9 +42,9 @@ def merge_and_multiply_scores(llama_file, bm25_file, llama2_file, output_file, a
     print(f"File kết hợp và nhân điểm đã được lưu tại {output_file}")
 
 # Đường dẫn tới các file llama_rank.txt, bm25_rank.txt và llama2_rank.txt
-bm25_rank_txt_path = "/home/trung/EXPERIMENT_50_HARD_1BATCH_ROUND2_JP (BEST PROPOSE - ROUND2 USING LLM WITH JAPANESE)/sorted_bm25_rank.txt"
-llama_rank_txt_path = "/home/trung/EXPERIMENT_50_HARD_1BATCH_ROUND2_JP (BEST PROPOSE - ROUND2 USING LLM WITH JAPANESE)/jp_full_cp_ckpt_round2_400/rank_japanese_ckpt_round2_400_best.txt"
-llama2_rank_txt_path = "/home/trung/EXPERIMENT_50_HARD_1BATCH_ROUND2_JP (BEST PROPOSE - ROUND2 USING LLM WITH JAPANESE)/jp_round1_2800/rank_japanese.txt"
+bm25_rank_txt_path = "temp/sorted_bm25_rank.txt"
+llama_rank_txt_path = "temp/jp_full_cp_ckpt_round2_400/rank_japanese_ckpt_round2_400_best.txt"
+llama2_rank_txt_path = "temp/jp_round1_2800/rank_japanese.txt"
 output_file = "rank_ensemble/merge_rank.txt"
 
 
