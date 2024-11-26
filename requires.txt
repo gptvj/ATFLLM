@@ -3,3 +3,11 @@ rank_bm25
 fugashi
 mecab-python3
 unidic-lite
+pip3 install torch torchvision torchaudio
+pip install transformers
+cd tevatron
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+cd ..
+pip install peft
+pip install bitsandbytes
+pip install xformers
