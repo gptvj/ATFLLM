@@ -43,17 +43,20 @@ def merge_and_multiply_scores(llama_file, bm25_file, llama2_file, output_file, a
 
 # Đường dẫn tới các file llama_rank.txt, bm25_rank.txt và llama2_rank.txt
 bm25_rank_txt_path = "temp/sorted_bm25_rank.txt"
-llama_rank_txt_path = "temp/jp_full_cp_ckpt_round2_400/rank_japanese_ckpt_round2_400_best.txt"
+llama_rank_txt_path = "temp/jp_full_cp_ckpt_round2_400/rank_japanese.txt"
 llama2_rank_txt_path = "temp/jp_round1_2800/rank_japanese.txt"
-output_file = "rank_ensemble/merge_rank.txt"
+output_file = "temp/rank_ensemble/merge_rank.txt"
 
+import os
+if not os.path.exists(os.path.dirname(output_file)): 
+    os.makedirs(os.path.dirname(output_file))
 
 # bm25 score
-alpha = 1
+alpha = 0.001
 # best round2 -400
-beta = 0
+beta = 0.6
 # best round 1 - 2800
-gamma = 0
+gamma = 0.4
 
 # Gọi hàm để gộp và nhân điểm
 merge_and_multiply_scores(llama_rank_txt_path, bm25_rank_txt_path, llama2_rank_txt_path, output_file, alpha, beta, gamma)

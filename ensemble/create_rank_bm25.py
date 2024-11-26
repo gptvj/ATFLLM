@@ -34,11 +34,11 @@ def sort_and_save_bm25_scores(full_rank, output_file):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", default="vjdatabase", type=str, help="Path đến dữ liệu")
-    parser.add_argument("--sorted_file", default="sorted_bm25_rank.txt", type=str, help="Path lưu file bm25_rank_sorted.txt")
+    parser.add_argument("--sorted_file", default="temp/sorted_bm25_rank.txt", type=str, help="Path lưu file bm25_rank_sorted.txt")
     args = parser.parse_args()
 
     # Bước 1: Load dữ liệu từ legal_corpus_update.json
-    corpus_path = os.path.join(args.data_path, "legal_corpus_update.json")
+    corpus_path = os.path.join(args.data_path, "legal_corpus.json")
     corpus_data = json.load(open(corpus_path, encoding='utf-8'))
 
     # Bước 2: Tạo dict chứa thông tin của các điều luật
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     bm25 = BM25Plus(documents, k1=0.4, b=0.6)
 
     # Bước 4: Load dữ liệu train từ test_12x7_retrieval.json
-    train_path = os.path.join(args.data_path, "test_12x7_retrieval.json")
+    train_path = os.path.join(args.data_path, "test_retrieval_data.json")
     training_items = load_json(train_path)
 
     # Bước 5: Tính điểm BM25 và lưu trực tiếp vào list full_rank
