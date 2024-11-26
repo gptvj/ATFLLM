@@ -4,8 +4,8 @@
 - using create_japanese_data folder
 *from ATFLLM*
 1. using command to create legal_corpus_retrieval_ja: python create_japanese_data/create_corpus.py
-2. using command to create train_retrieval_ja: 
-3. using command to create validation_retrieval_ja and test_retrieval_ja: 
+2. using command to create train_retrieval_ja: python create_japanese_data/create_data.py
+3. using command to create validation_retrieval_ja and test_retrieval_ja: python create_japanese_data/create_test.py
 ### Step 1: Create negative for round 1
 - 
 ### Step 2: Training round 1
