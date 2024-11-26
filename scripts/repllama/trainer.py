@@ -2,7 +2,8 @@ import os
 from typing import Dict, List, Tuple, Optional, Any, Union
 
 from transformers.trainer import Trainer
-from transformers.deepspeed import is_deepspeed_zero3_enabled
+# from transformers.deepspeed import is_deepspeed_zero3_enabled
+from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
 from peft import get_peft_model_state_dict
 
 import torch
