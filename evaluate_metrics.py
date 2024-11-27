@@ -33,7 +33,8 @@ with open(args.rank_txt_path, "r") as f:
         top10_predict[query_id].append(doc_id)
 
 # Input u value for MRR@u and MAP@u calculation
-u = int(input("Enter the value of u to compute MRR@u and MAP@u: "))
+# u = int(input("Enter the value of u to compute MRR@u and MAP@u: "))
+u = 10
 
 # Calculate precision@k and recall@k for k in {1, 3, 5, 10}
 precisions = {k: 0 for k in ks}
@@ -54,8 +55,8 @@ for k in ks:
     precisions[k] /= len(top10_predict)
     recalls[k] /= len(top10_predict)
 
-print("Precisions@k: ", precisions)
-print("Recalls@k: ", recalls)
+# print("Precisions@k: ", precisions)
+# print("Recalls@k: ", recalls)
 
 # Calculate MAP@u
 APs = []
@@ -71,7 +72,7 @@ for query_id in top10_predict:
     APs.append(sum_precision / len(positive_passages))
 
 MAP = sum(APs) / len(APs)
-print(f"MAP@{u}: ", MAP)
+# print(f"MAP@{u}: ", MAP)
 
 # Calculate MRR@u
 MRRs = []
@@ -84,7 +85,7 @@ for query_id in top10_predict:
             break
 
 MRR = sum(MRRs) / len(MRRs)
-print(f"MRR@{u}: ", MRR)
+# print(f"MRR@{u}: ", MRR)
 
 # Calculate my_recall divided by the minimum of u and total number of relevant documents
 my_recalls = {k: 0 for k in ks}
@@ -102,7 +103,7 @@ for query_id in top10_predict:
 for k in ks:
     my_recalls[k] /= len(top10_predict)
 
-print("My_recalls@k: ", my_recalls)
+# print("My_recalls@k: ", my_recalls)
 
 # Calculate NDCG@10
 ndcgs_10 = []
@@ -125,4 +126,34 @@ for query_id in top10_predict:
 
 # Calculate the average NDCG@10 across all queries
 avg_ndcg_10 = sum(ndcgs_10) / len(ndcgs_10)
-print("NDCG@10: ", avg_ndcg_10)
+# print("NDCG@10: ", avg_ndcg_10)
+
+from prettytable import PrettyTable
+
+# Print precision@k and recall@k
+precision_table = PrettyTable()
+precision_table.field_names = ["k", "Precision@k", "Recall@k"]
+for k in ks:
+    precision_table.add_row([k, f"{precisions[k]:.4f}", f"{recalls[k]:.4f}"])
+print("\nPrecision and Recall at different k values:")
+print(precision_table)
+
+# Print MAP@u and MRR@u
+metrics_table = PrettyTable()
+metrics_table.field_names = ["Metric", "Value"]
+metrics_table.add_row([f"MAP@{u}", f"{MAP:.4f}"])
+metrics_table.add_row([f"MRR@{u}", f"{MRR:.4f}"])
+print("\nMAP and MRR:")
+print(metrics_table)
+
+# Print my_recalls@k
+my_recall_table = PrettyTable()
+my_recall_table.field_names = ["k", "My_recall@k"]
+for k in ks:
+    my_recall_table.add_row([k, f"{my_recalls[k]:.4f}"])
+print("\nMy Recall at different k values:")
+print(my_recall_table)
+
+# Print NDCG@10
+print(f"\nNDCG@10: {avg_ndcg_10:.4f}")
+
