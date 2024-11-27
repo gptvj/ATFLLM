@@ -7,7 +7,7 @@ pip install fugashi
 pip install mecab-python3
 pip install unidic-lite
 pip3 install torch torchvision torchaudio
-pip install transformers
+pip install transformers==4.42.4
 pip install peft
 pip install bitsandbytes
 pip install xformers
