@@ -1,6 +1,8 @@
 # Legal Document Retrieval - Japanese Dataset
 
 This repository provides the workflow and scripts for training and evaluating a legal document retrieval system using BM25 and fine-tuned models. The workflow involves multiple rounds of training, the creation of hard negatives, and ensemble evaluation.
+Tevatron is a library for **dense retrieval** tasks. We inherited the code from Tevatron, custom-implemented the necessary modules, and performed model quantization prior to training due to hardware limitations. You can access the full source code at the following GitHub repository:
+[Tevatron GitHub Repository](https://github.com/texttron/tevatron)
 
 ---
 
@@ -51,6 +53,8 @@ Use the `create_japanese_data` directory to prepare the dataset.
    ```bash
    python create_japanese_data/create_test.py
    ```
+
+You can see more details in the [scripts.md](./create_japanese_data/scripts.md) file.
 
 ---
 
