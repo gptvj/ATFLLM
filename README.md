@@ -45,7 +45,11 @@ Ensure the following are installed:
    ```
 - You can run this script for install all: 
 [install_lib.sh](./install_lib.sh)
-
+   ```bash
+   cd tevatron
+   export PYTHONPATH=$PYTHONPATH:$(pwd)
+   cd ..
+   ```
 ---
 
 ## Dataset Creation
