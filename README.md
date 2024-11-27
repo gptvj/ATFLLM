@@ -95,7 +95,11 @@ To address potential NaN issues caused by the quantization process, we will hand
 ### Step 4: Training - Round 2
 Run the following script to start the first training round:
    ```bash
-   ./run_train_round2.sh
+   ./run_train_round2.sh pretrained_model/model_repllama_50_hard_round1_2_batch/checkpoint-2800
+   ```
+   or checkpoint in huggingface:
+   ```bash
+   ./run_train_round2.sh gptvj/atfllm-r1
    ```
 
 ### Step 5: Evaluate
