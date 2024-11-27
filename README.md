@@ -2,7 +2,7 @@
    <img src="./Images/logo-vj.c7683b6.png" width="800" height="200">
 </div>
 <div align="center">
-   <img src="./Images/pipeline.jpg" alt="Pipeline Image" width="1020" height="600">
+   <img src="./Images/pipeline.jpg" alt="Pipeline Image" width="1020" height="400">
 </div>
 
 # Legal Document Retrieval - Japanese Dataset
