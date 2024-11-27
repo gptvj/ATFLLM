@@ -40,6 +40,9 @@ Ensure the following are installed:
    conda create -n new_atf python==3.9.19
    ```
 - Required libraries from `requirements.txt`
+   ```bash
+   pip install -r requirements.txt
+   ```
 - You can run this script for install all: 
 [install_lib.sh](./install_lib.sh)
 
