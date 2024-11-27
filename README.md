@@ -1,3 +1,5 @@
+![Logo](./Images/logo-vj.c7683b6.png)
+
 # Legal Document Retrieval - Japanese Dataset
 
 This repository provides the workflow and scripts for training and evaluating a legal document retrieval system using BM25 and fine-tuned models. The workflow involves multiple rounds of training, the creation of hard negatives, and ensemble evaluation.
