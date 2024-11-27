@@ -128,18 +128,17 @@ You can see more details in the [scripts.md](./inference/scripts.md) file.
    python ensemble/create_rank_bm25.py
    ```
 
-2. **Evaluate Round 2 Model**  
+2. **Ensemble bm25, round1, round2**  
    ```bash
    python ensemble/ensemble_bm25_llm1_llm2.py
    ```
 
-2. **Evaluate the BM25 ensemble**  
-Evaluate the BM25 ensemble:
+3. **Evaluate the BM25**  
    ```bash
    python evaluate_metrics.py --test_ds_path japanese_datasets/test_retrieval_ja --rank_txt_path temp/sorted_bm25_rank.txt
    ```
 
-Evaluate the merged ensemble:
+4. **Evaluate the merged ensemble (BM25 + round1 + round2)**  
    ```bash
    python evaluate_metrics.py --test_ds_path japanese_datasets/test_retrieval_ja --rank_txt_path temp/rank_ensemble/merge_rank.txt
    ```
