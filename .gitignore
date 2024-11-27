@@ -9,3 +9,6 @@ hard_negative_ja_round1_for_training_round2/
 # Model
 temp/
 pretrained_model/
+
+# file no push
+push_data_to_hub.py

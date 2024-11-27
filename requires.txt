@@ -12,3 +12,4 @@ pip install peft
 pip install bitsandbytes
 pip install xformers
 pip install faiss-gpu==1.7.2
+pip install prettytable
