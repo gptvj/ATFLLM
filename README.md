@@ -73,13 +73,21 @@ Run the following script to start the first training round:
    ./run_train_round1.sh
    ```
 
+- It took almost 70 hours to train this round so if you don't want to waste time you can use the checkpoint from huggingface for the next steps: [gptvj/atfllm-r1](https://huggingface.co/gptvj/atfllm-r1)
+
 ### Step 3: Create Hard Negatives for Round 2
 
 1. **Generate ranked files using the model trained in round 1:**  
    ```bash
-   create_hardnegative_data/create_top_negative_round2.sh
+   create_hardnegative_data/create_top_negative_round2.sh pretrained_model/model_repllama_50_hard_round1_2_batch/checkpoint-2800
    ```
+   or checkpoint in huggingface:
+   ```bash
+   create_hardnegative_data/create_top_negative_round2.sh gptvj/atfllm-r1
+   ```
+
 2. **Resolve NaN errors and replace with BM25 negatives**  
+To address potential NaN issues caused by the quantization process, we will handle hard negatives in two ways: for sentences resulting in NaN, we will regenerate hard negatives using BM25; for the remaining sentences, we will leverage incorrect data from round 1 to construct hard negatives, ensuring more robust and effective training.
    ```bash
    python create_hardnegative_data/create_hard_negative_resolve_nan_error.py
    ```
