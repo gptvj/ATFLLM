@@ -102,13 +102,18 @@ Run the following script to start the first training round:
    ./run_train_round2.sh gptvj/atfllm-r1
    ```
 
+- It took almost 70 hours to train this round so if you don't want to waste time you can use the checkpoint from huggingface for the next steps: [gptvj/atfllm-r2](https://huggingface.co/gptvj/atfllm-r2)
+
 ### Step 5: Evaluate
 
-1. **Evaluate Round 1 Model**  
+1. **Inference on checkpoint round 1 and round 2**  
+You can see more details in the [scripts.md](./inference/scripts.md) file.
+
+2. **Evaluate Round 1 Model**  
    ```bash
    python evaluate_metrics.py --test_ds_path japanese_datasets/test_retrieval_ja --rank_txt_path temp/jp_round1_2800/rank_japanese.txt
    ```
-2. **Evaluate Round 2 Model**  
+3. **Evaluate Round 2 Model**  
    ```bash
    python evaluate_metrics.py --test_ds_path japanese_datasets/test_retrieval_ja --rank_txt_path temp/jp_full_cp_ckpt_round2_400/rank_japanese.txt
    ```
