@@ -1,4 +1,4 @@
-![Logo](./Images/logo-vj.c7683b6.png)
+<img src="./Images/logo-vj.c7683b6.png" width="800" height="200">
 
 # Legal Document Retrieval - Japanese Dataset
 
