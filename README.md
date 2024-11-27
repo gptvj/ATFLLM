@@ -1,4 +1,5 @@
 <img src="./Images/logo-vj.c7683b6.png" width="800" height="200">
+<iframe src="./Images/pipeline.pdf" width="800" height="600"></iframe>
 
 # Legal Document Retrieval - Japanese Dataset
 
