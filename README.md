@@ -7,8 +7,8 @@
 
 # Legal Document Retrieval - Japanese Dataset
 
-This repository provides the workflow and scripts for training and evaluating a legal document retrieval system using BM25 and fine-tuned models. The workflow involves multiple rounds of training, the creation of hard negatives, and ensemble evaluation.
-Tevatron is a library for **dense retrieval** tasks. We inherited the code from Tevatron, custom-implemented the necessary modules, and performed model quantization prior to training due to hardware limitations. You can access the full source code at the following GitHub repository:
+- This repository provides the workflow and scripts for training and evaluating a legal document retrieval system using BM25 and fine-tuned models. The workflow involves multiple rounds of training, the creation of hard negatives, and ensemble evaluation.
+- Tevatron is a library for **dense retrieval** tasks. We inherited the code from Tevatron, custom-implemented the necessary modules, and performed model quantization prior to training due to hardware limitations. You can access the full source code at the following GitHub repository:
 [Tevatron GitHub Repository](https://github.com/texttron/tevatron)
 
 ---
@@ -35,9 +35,13 @@ This project is focused on fine-tuning language models for legal document retrie
 ## Requirements
 
 Ensure the following are installed:
-- Python 3.x
+- Python 3.9.19
+   ```bash
+   conda create -n new_atf python==3.9.19
+   ```
 - Required libraries from `requirements.txt`
-- Any additional dependencies mentioned in the `create_japanese_data` and `create_hardnegative_data` directories.
+- You can run this script for install all: 
+[install_lib.sh](./install_lib.sh)
 
 ---
 
@@ -46,21 +50,10 @@ Ensure the following are installed:
 ### Step 1: Create Japanese Dataset
 Use the `create_japanese_data` directory to prepare the dataset.
 
-1. **Generate the corpus**  
-   ```bash
-   python create_japanese_data/create_corpus.py
-   ```
+1. **Download root data from huggingface**  
+python load_data_from_hub.py
 
-2. **Generate the training dataset**  
-   ```bash
-   python create_japanese_data/create_data.py
-   ```
-
-3. **Generate validation and test datasets**  
-   ```bash
-   python create_japanese_data/create_test.py
-   ```
-
+2. **Generate the corpus, training and test datasets**  
 You can see more details in the [scripts.md](./create_japanese_data/scripts.md) file.
 
 ---
