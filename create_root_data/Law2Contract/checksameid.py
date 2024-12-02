@@ -13,7 +13,8 @@ def writeJsonFile(filePath, data):
 
 if __name__ == '__main__':
     # file_path = './LawContractAPI_full.json'
-    file_path = './Law_Contract_2208/New_LawContract_Format.json'
+    # file_path = './Law_Contract_2208/New_LawContract_Format.json'
+    file_path = r'../../create_root_data/Law2Contract/Data/LawContractAPI_demo_format.json'
     data = readJsonFile(file_path)
 
     # kiểm tra bị trùng lặp dữ liệu

@@ -12,7 +12,8 @@ def writeJsonFile(filePath, data):
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
-    file_path = r'.\Law_Contract_2208\New_LawContract_Format.json'
+    # file_path = r'.\Law_Contract_2208\New_LawContract_Format.json'
+    file_path = r'../../create_root_data/Law2Contract/Data/LawContract_format_after.json'
     # file_path = './LawContractAPI_full_after.json'
     data = readJsonFile(file_path)
     
