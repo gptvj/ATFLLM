@@ -13,7 +13,9 @@ def writeJsonFile(filePath, data):
 
 if __name__ == '__main__':
     # file_path = './LawContractAPI_full.json'
-    file_path = r'.\Law_Contract_2208\New_LawContract_Format.json'
+    file_path = r'../../create_root_data/Law2Contract/Data/LawContractAPI_demo_format.json'
+    # file_path = r'.\Law_Contract_2208\New_LawContract_Format.json'
+    
     data = readJsonFile(file_path)
     print(len(data))
     
@@ -34,7 +36,13 @@ if __name__ == '__main__':
                 continue
             relevant_articles = []
             for item in v:
-                relevant_articles.extend(item["relevant_articles"])
+                same = False
+                for pos in relevant_articles: 
+                    if pos['law_id'] == item["relevant_articles"][0]['law_id'] and pos['article_id'] == item["relevant_articles"][0]['article_id']:
+                        same = True
+                        break
+                if same == False:
+                    relevant_articles.extend(item["relevant_articles"])
             
             new_item = {
                 # "muc": v[0]["muc"],
@@ -47,5 +55,12 @@ if __name__ == '__main__':
             new_data.append(v[0])
 
     print(len(new_data))
-    writeJsonFile('./Law_Contract_2208/New_LawContract_Format_after.json', new_data)
+    file_save = r'../../create_root_data/Law2Contract/Data/LawContract_format_after.json'
+    if not os.path.exists(os.path.dirname(file_save)): 
+        os.makedirs(os.path.dirname(file_save))
+    if not os.path.exists(file_save):
+        writeJsonFile(file_save, new_data)
+        print("Da xu ly trung xong!")
+    else: 
+        print("File đã tồn tại!")
             

@@ -13,3 +13,6 @@ pretrained_model/
 # file no push
 push_data_to_hub.py
 push_checkpoint_to_hub.py
+
+# create root data
+create_root_data/Law2Contract/Data/

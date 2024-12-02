@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     ## process data
 
-    filePath = r'.\LawContractAPI_full_after.json'
+    filePath = r'../../create_root_data/Law2Contract/Data/LawContractAPI_AddCaption.json'
     data = readJsonFile(filePath)
     new_data = []
     for item in data: 
@@ -43,4 +43,12 @@ if __name__ == '__main__':
             'relevant_articles': item['relevant_articles']
         }
         new_data.append(new_item)
-    writeJsonFile(r'.\LawContractAPI_full_1107.json', new_data)
+    
+    file_save = r'../../create_root_data/Law2Contract/Data/LawContractAPI_full.json'
+    if not os.path.exists(os.path.dirname(file_save)): 
+        os.makedirs(os.path.dirname(file_save))
+    if not os.path.exists(file_save):
+        writeJsonFile(file_save, new_data)
+        print("Da xu ly xong!")
+    else: 
+        print("File đã tồn tại!")
