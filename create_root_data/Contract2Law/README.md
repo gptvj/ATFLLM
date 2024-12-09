@@ -1,3 +1,10 @@
+# Requirements
+```console
+conda create --name myenv python=3.10
+conda activate myenv
+pip install -r requirements.txt
+```
+
 # Step by Step
 
 ## Step 1: Chia chunk cho hợp đồng
