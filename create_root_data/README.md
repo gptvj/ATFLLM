@@ -1,4 +1,8 @@
-# Trong thư mục này tôi chia ra 3 thư mục con với 3 nhiệm vụ rõ ràng như sau: 
-- Thư mục Law2Contract: Dùng để tạo hợp đồng từ luật
-- Thư mục Contract2Law: Dùng để tìm pháp luật liên quan trong tập corpus với hợp đồng đầu vào.
-- Thư mục MergeData: Thư mục tổng hợp data tạo data cuối cùng
+In this directory, I have divided it into three subdirectories with three distinct tasks as follows:
+- Law2Contract: Used to generate contracts from laws.
+- Contract2Law: Used to find relevant laws in the corpus based on the input contract.
+- MergeData: A directory for aggregating data to create the final dataset.
+
+Note: This is only a sample for creating data and not the entire process for generating the complete dataset.
+
+I hope this sample provides you with a clear and comprehensive overview of how we create our data.
