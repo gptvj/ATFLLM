@@ -1,6 +1,9 @@
 __pycache__/
 **/__pycache__/
 
+# environment variables
+.env
+
 # Data
 vjdatabase/
 japanese_datasets/
