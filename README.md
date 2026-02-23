@@ -2,35 +2,92 @@
    <img src="./Images/pipeline.jpg" alt="Pipeline Image" width="1020" height="400">
 </div>
 
-# Legal Document Retrieval - Japanese Dataset
-
-- This repository provides the workflow and scripts for training and evaluating a legal document retrieval system using BM25 and fine-tuned models. The workflow involves multiple rounds of training, the creation of hard negatives, and ensemble evaluation.
-- Tevatron is a library for **dense retrieval** tasks. We inherited the code from Tevatron, custom-implemented the necessary modules, and performed model quantization prior to training due to hardware limitations. You can access the full source code at the following GitHub repository:
-[Tevatron GitHub Repository](https://github.com/texttron/tevatron)
-
----
+# Adaptive Two-Phase Finetuning LLMs for Japanese Legal Text Retrieval
 
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Requirements](#requirements)
-3. [Dataset Creation](#dataset-creation)
-4. [Training and Evaluation Workflow](#training-and-evaluation-workflow)
-5. [Ensemble Evaluation](#ensemble-evaluation)
+2. [Dataset Information](#dataset-information)
+3. [Project Structure](#project-structure)
+4. [Requirements](#requirements)
+5. [Usage Guide](#usage-guide)
+6. [Citation](#citation)
+7. [License](#license)
+8. [Contributing](#contributing)
 
 ---
 
 ## Introduction
 
-This project is focused on fine-tuning language models for legal document retrieval in Japanese. It includes:
-- Creating a Japanese dataset from root data.
-- Iterative training rounds with hard negatives.
-- Ensemble techniques combining BM25 and fine-tuned models for improved performance.
+This repository provides a complete workflow for training and evaluating a legal document retrieval system specialized for Japanese legal texts. The system combines traditional BM25 with fine-tuned language models through an adaptive two-phase training approach.
 
+### Key Features
+- **Specialized for Japanese Legal Domain**: Trained on Japanese legal documents from e-Gov website
+- **Two-Phase Training**: Iterative training rounds with hard negative mining for improved performance
+- **Hybrid Retrieval**: Ensemble of BM25 and neural models for robust results
+- **Production-Ready**: Includes model quantization for deployment on limited hardware
+- **Complete Pipeline**: From raw data processing to model evaluation
+
+### Technical Foundation
+This project builds upon [Tevatron](https://github.com/texttron/tevatron), a library for dense retrieval tasks. We customized the implementation with:
+- Modified training pipeline for RepLLaMA architecture
+- Quantization support for resource-constrained environments
+- Hard negative mining strategies
+- BM25 fallback mechanism for handling quantization-induced NaN values
+
+---
+
+## Dataset Information
+
+### Overview
+The dataset consists of Japanese legal documents with query-document pairs for retrieval tasks.
+
+### Statistics
+- **Corpus Size**: 743 documents
+- **Training Queries**: 3259 queries
+- **Validation Queries**: 70 queries  
+- **Test Queries**: 130 queries  
+- **Data Format**: JSONL
+
+### Data Structure
+```bash
+vjdatabase/
+├── legal_corpus.json               # Legal documents with doc_id and text
+├── train_retrieval_data.json       # Training query-document pairs
+├── validation_retrieval_data.json  # Validation queries with relevant documents
+└── test_retrieval_data.json        # Test queries with relevant documents
+```
+
+### Data Source
+The root data originates from e-Gov website https://laws.e-gov.go.jp/, processed and adapted for Japanese legal document retrieval tasks.
+
+---
+
+## Project Structure
+```bash
+ATFLLM/
+├── create_hardnegative_data/ # Create dataset for round 2
+├── create_japanese_data/ # Format data after raw data processing
+├── create_root_data/ # Create and process raw data
+├── ensemble/ # Ensemble methods
+├── Images/ # Images for GitHub repository
+├── inference/ # Model inference
+├── scripts/ # Main code for training RepLLaMA
+├── tevatron/ # Dense retrieval library
+├── requirements.txt # Dependencies
+└── README.md
+```
+
+### Key Directories
+- **create_japanese_data**: Scripts for processing raw data into training format
+- **tevatron**: Core retrieval model implementation (adapted from Texttron)
+- **scripts/repllama**: Training pipeline for RepLLaMA model
+- **ensemble**: BM25 and neural model ensemble strategies
 ---
 
 ## Requirements
 
+### Environments
 Ensure the following are installed:
 - Python 3.9.19
    ```bash
@@ -49,36 +106,48 @@ Ensure the following are installed:
    ```
 ---
 
-## Dataset Creation
-
-### Step 1: Create Japanese Dataset
-Use the `create_japanese_data` directory to prepare the dataset.
-
-1. **Download root data from huggingface**  
-python load_data_from_hub.py
-
-2. **Generate the corpus, training and test datasets**  
-You can see more details in the [scripts.md](./create_japanese_data/scripts.md) file.
+### Hardware Requirements
+- **GPU**: NVIDIA GPU with at least 16GB VRAM (24GB recommended)
+- **RAM**: 32GB+ system memory
+- **Disk Space**: 100GB+ free space for models and datasets
+- **Training Time**: ~70 hours per round on single GPU (A100/V100)
 
 ---
 
-## Training and Evaluation Workflow
+## Usage Guide
 
-### Step 2: Training - Round 1
+### Dataset Creation
+
+#### Step 1: Create Japanese Dataset
+Use the `create_japanese_data` directory to prepare the dataset.
+
+1. **Download root data from Hugging Face**  
+   ```bash
+   python load_data_from_hub.py
+   ```
+
+2. **Generate the corpus, training and test datasets**  
+   You can see more details in the [scripts.md](./create_japanese_data/scripts.md) file.
+
+---
+
+### Training and Evaluation Workflow
+
+#### Step 2: Training - Round 1
 Run the following script to start the first training round:
    ```bash
    ./run_train_round1.sh
    ```
 
-- It took almost 70 hours to train this round so if you don't want to waste time you can use the checkpoint from huggingface for the next steps: [gptvj/atfllm-r1](https://huggingface.co/gptvj/atfllm-r1)
+- It took almost 70 hours to train this round. If you don't want to wait, you can use the pre-trained checkpoint from Hugging Face for the next steps: [gptvj/atfllm-r1](https://huggingface.co/gptvj/atfllm-r1)
 
-### Step 3: Create Hard Negatives for Round 2
+#### Step 3: Create Hard Negatives for Round 2
 
 1. **Generate ranked files using the model trained in round 1:**  
    ```bash
    create_hardnegative_data/create_top_negative_round2.sh pretrained_model/model_repllama_50_hard_round1_2_batch/checkpoint-2800
    ```
-   or checkpoint in huggingface:
+   Or use checkpoint from Hugging Face:
    ```bash
    create_hardnegative_data/create_top_negative_round2.sh gptvj/atfllm-r1
    ```
@@ -89,22 +158,22 @@ To address potential NaN issues caused by the quantization process, we will hand
    python create_hardnegative_data/create_hard_negative_resolve_nan_error.py
    ```
 
-### Step 4: Training - Round 2
-Run the following script to start the first training round:
+#### Step 4: Training - Round 2
+Run the following script to start the second training round:
    ```bash
    ./run_train_round2.sh pretrained_model/model_repllama_50_hard_round1_2_batch/checkpoint-2800
    ```
-   or checkpoint in huggingface:
+   Or use checkpoint from Hugging Face:
    ```bash
    ./run_train_round2.sh gptvj/atfllm-r1
    ```
 
-- It took almost 70 hours to train this round so if you don't want to waste time you can use the checkpoint from huggingface for the next steps: [gptvj/atfllm-r2](https://huggingface.co/gptvj/atfllm-r2)
+- It took almost 70 hours to train this round. If you don't want to wait, you can use the pre-trained checkpoint from Hugging Face for the next steps: [gptvj/atfllm-r2](https://huggingface.co/gptvj/atfllm-r2)
 
-### Step 5: Evaluate
+#### Step 5: Evaluate
 
-1. **Inference on checkpoint round 1 and round 2**  
-You can see more details in the [scripts.md](./inference/scripts.md) file.
+1. **Inference on checkpoints from round 1 and round 2**  
+   You can see more details in the [scripts.md](./inference/scripts.md) file.
 
 2. **Evaluate Round 1 Model**  
    ```bash
@@ -116,9 +185,9 @@ You can see more details in the [scripts.md](./inference/scripts.md) file.
    ```
 
 ---
-## Ensemble Evaluation
+### Ensemble Evaluation
 
-### Step 6: Ensemble Rankings
+#### Step 6: Ensemble Rankings
 
 1. **Create BM25 rank file**  
    ```bash
@@ -142,8 +211,8 @@ You can see more details in the [scripts.md](./inference/scripts.md) file.
 
 ---
 
-### Results
-Include a summary of metrics such as recall, precision, MAP, MRR, NDCG.
+#### Results
+The ensemble model achieves the following metrics on the test set:
 
 ```bash
 Precision and Recall at different k values:
@@ -185,7 +254,36 @@ NDCG@10: 0.7472
 
 ---
 
-### Citation
+## Citation
 If you use this work in your research, please cite it as:
 
 *Update later*
+
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+### Third-Party Licenses
+- **Tevatron**: Apache License 2.0 (see [Tevatron repository](https://github.com/texttron/tevatron))
+- **Pre-trained Models**: Check individual model cards on Hugging Face
+
+## Contributing
+
+We welcome contributions to improve this project!
+
+### How to Contribute
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a Pull Request
+
+### Contribution Guidelines
+- Follow PEP 8 style guidelines for Python code
+- Add tests for new features
+- Update documentation as needed
+- Ensure all tests pass before submitting PR
+
+### Reporting Issues
+Please use the [issue tracker](https://github.com/gptvj/ATFLLM/issues) to report bugs or request features.
