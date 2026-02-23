@@ -257,7 +257,17 @@ NDCG@10: 0.7472
 ## Citation
 If you use this work in your research, please cite it as:
 
-*Update later*
+```bash
+@misc{trung2024adaptivetwophasefinetuningllms,
+      title={Adaptive Two-Phase Finetuning LLMs for Japanese Legal Text Retrieval}, 
+      author={Quang Hoang Trung and Nguyen Van Hoang Phuc and Le Trung Hoang and Quang Huu Hieu and Vo Nguyen Le Duy},
+      year={2024},
+      eprint={2412.13205},
+      archivePrefix={arXiv},
+      primaryClass={cs.IR},
+      url={https://arxiv.org/abs/2412.13205}, 
+}
+```
 
 
 ## License
