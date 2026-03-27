@@ -59,7 +59,7 @@ class RepLLaMA(EncoderModel):
 
 
         # 
-        # print('q_hiddin ne: \n', q_hidden)
+        # print('q_hiddin: \n', q_hidden)
         attention_mask = qry['attention_mask']
         # q_reps is the last token representation that is not padding
         sequence_lengths = attention_mask.sum(dim=1)
@@ -74,7 +74,7 @@ class RepLLaMA(EncoderModel):
         # 
         # print(last_token_indices)
         q_reps = q_hidden[torch.arange(q_hidden.size(0)), last_token_indices]
-        # print("truoc khi normalize ne: \n", q_reps)
+        # print("before normalize: \n", q_reps)
         q_reps = nn.functional.normalize(q_reps, p=2, dim=-1)
         return q_reps
 
@@ -203,9 +203,7 @@ class RepLLaMA(EncoderModel):
         )
         return model
     
-
-
-    # ------- build de chay round 2 load checkpoints from round1
+    # build to run round 2 with checkpoints from round 1
 
     @classmethod
     def build_round2(
@@ -298,14 +296,7 @@ class RepLLaMA(EncoderModel):
     
     # ------ edit
 
-
-
     def save(self, output_dir: str):
         self.lm_q.save_pretrained(output_dir)
-
-
-
-
-
 
     
