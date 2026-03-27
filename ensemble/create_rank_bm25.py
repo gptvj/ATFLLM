@@ -7,41 +7,40 @@ import argparse
 import pandas as pd
 from utils import bm25_tokenizer
 
-# Hàm load JSON
+# Function to load JSON
+
 def load_json(file_path):
     with open(file_path, encoding='utf-8') as f:
         return json.load(f)["items"]
 
-# Hàm sắp xếp trực tiếp kết quả BM25
+# Function to sort and save BM25 results
+
 def sort_and_save_bm25_scores(full_rank, output_file):
-    # Tạo DataFrame từ kết quả tính BM25
+    # Create DataFrame from BM25 scoring results
     bm25_data = pd.DataFrame(full_rank, columns=["query_id", "corpus_id", "bm25_score"])
 
-    # Đảm bảo query_id là số nguyên để sắp xếp đúng
+    # Ensure query_id is integer to sort correctly
     bm25_data["query_id"] = bm25_data["query_id"].astype(int)
 
-    # Sắp xếp theo query_id tăng dần và bm25_score giảm dần
+    # Sort by query_id ascending and bm25_score descending
     sorted_data = bm25_data.sort_values(by=["query_id", "bm25_score"], ascending=[True, False])
 
-    
-    
-
-    # Lưu kết quả vào file đầu ra mà không có header
+    # Save results to output file without header
     sorted_data.to_csv(output_file, sep="\t", index=False, header=False)
 
-    print(f"File đã được sắp xếp và lưu tại {output_file}")
+    print(f"Sorted file saved at {output_file}")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_path", default="vjdatabase", type=str, help="Path đến dữ liệu")
-    parser.add_argument("--sorted_file", default="temp/sorted_bm25_rank.txt", type=str, help="Path lưu file bm25_rank_sorted.txt")
+    parser.add_argument("--data_path", default="vjdatabase", type=str, help="Path to the data")
+    parser.add_argument("--sorted_file", default="temp/sorted_bm25_rank.txt", type=str, help="Path to save bm25_rank_sorted.txt")
     args = parser.parse_args()
 
-    # Bước 1: Load dữ liệu từ legal_corpus_update.json
+    # Step 1: Load data from legal_corpus.json
     corpus_path = os.path.join(args.data_path, "legal_corpus.json")
     corpus_data = json.load(open(corpus_path, encoding='utf-8'))
 
-    # Bước 2: Tạo dict chứa thông tin của các điều luật
+    # Step 2: Create dict to hold law article information
     legal_dict = {}
     documents = []
     doc_refers = []
@@ -63,14 +62,14 @@ if __name__ == '__main__':
                 documents.append(tokens)
                 doc_refers.append([law_id, article_id, article_full])
 
-    # Bước 3: Khởi tạo mô hình BM25 với các tài liệu đã tokenize
+    # Step 3: Initialize BM25 model with tokenized documents
     bm25 = BM25Plus(documents, k1=0.4, b=0.6)
 
-    # Bước 4: Load dữ liệu train từ test_12x7_retrieval.json
+    # Step 4: Load training data from test_retrieval_data.json
     train_path = os.path.join(args.data_path, "test_retrieval_data.json")
     training_items = load_json(train_path)
 
-    # Bước 5: Tính điểm BM25 và lưu trực tiếp vào list full_rank
+    # Step 5: Compute BM25 scores and append to full_rank
     full_rank = []
     count_query_id = 1
 
@@ -86,5 +85,5 @@ if __name__ == '__main__':
             score = predictions[index]
             full_rank.append([query_id, str(corpus_id), score])  # query_id là số nguyên
 
-    # Bước 6: Sắp xếp và lưu trực tiếp vào file sorted_bm25_rank.txt
+    # Step 6: Sort and save to sorted_bm25_rank.txt
     sort_and_save_bm25_scores(full_rank, args.sorted_file)

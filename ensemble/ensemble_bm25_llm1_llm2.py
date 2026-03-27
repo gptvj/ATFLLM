@@ -10,38 +10,38 @@
 import pandas as pd
 
 def merge_and_multiply_scores(llama_file, bm25_file, llama2_file, output_file, alpha, beta, gamma):
-    # Đọc file llama_rank.txt
+    # Read llama_rank.txt file
     llama_data = pd.read_csv(llama_file, sep="\t", header=None, names=["query_id", "corpus_id", "llama_score"])
 
-    # Đọc file bm25_rank.txt
+    # Read bm25_rank.txt file
     bm25_data = pd.read_csv(bm25_file, sep="\t", header=None, names=["query_id", "corpus_id", "bm25_score"])
 
-    # Đọc file llama2_rank.txt
+    # Read llama2_rank.txt file
     llama2_data = pd.read_csv(llama2_file, sep="\t", header=None, names=["query_id", "corpus_id", "llama2_score"])
 
 
 
-    # Gộp ba bảng dựa trên cột query_id và corpus_id
+    # Merge three tables based on query_id and corpus_id
     merged_data = pd.merge(bm25_data, llama_data, on=["query_id", "corpus_id"], how='inner')
     merged_data = pd.merge(merged_data, llama2_data, on=["query_id", "corpus_id"], how='inner')
     merged_data = merged_data.drop_duplicates()
 
-    # Tạo cột score_merge_multi bằng cách kết hợp bm25_score, llama_score và llama2_score
+    # Create score_merge_multi column by combining bm25_score, llama_score and llama2_score
     merged_data["score_merge_multi"] = alpha * merged_data["bm25_score"] + beta * merged_data["llama_score"] + gamma * merged_data["llama2_score"]
 
 
-    # Sắp xếp theo query_id tăng dần và score_merge_multi giảm dần
+    # Sort by query_id ascending and score_merge_multi descending
     merged_data = merged_data.sort_values(by=["query_id", "score_merge_multi"], ascending=[True, False])
 
-    # Chọn chỉ cột query_id, corpus_id và score_merge_multi
+    # Select only query_id, corpus_id and score_merge_multi columns
     final_data = merged_data[["query_id", "corpus_id", "score_merge_multi"]]
 
-    # Lưu vào file kết quả
+    # Save results to output file
     final_data.to_csv(output_file, sep="\t", index=False, header=False)
 
-    print(f"File kết hợp và nhân điểm đã được lưu tại {output_file}")
+    print(f"Merged and weighted score file saved at {output_file}")
 
-# Đường dẫn tới các file llama_rank.txt, bm25_rank.txt và llama2_rank.txt
+# Paths to llama_rank.txt, bm25_rank.txt and llama2_rank.txt files
 bm25_rank_txt_path = "temp/sorted_bm25_rank.txt"
 llama_rank_txt_path = "temp/jp_full_cp_ckpt_round2_400/rank_japanese.txt"
 llama2_rank_txt_path = "temp/jp_round1_2800/rank_japanese.txt"
@@ -58,5 +58,5 @@ beta = 0.6
 # best round 1 - 2800
 gamma = 0.4
 
-# Gọi hàm để gộp và nhân điểm
+# Call function to merge and multiply scores
 merge_and_multiply_scores(llama_rank_txt_path, bm25_rank_txt_path, llama2_rank_txt_path, output_file, alpha, beta, gamma)

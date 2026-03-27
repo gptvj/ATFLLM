@@ -16,7 +16,7 @@ if __name__ == '__main__':
     file_path = './Law_Contract_2208/New_LawContract_Format.json'
     data = readJsonFile(file_path)
 
-    # kiểm tra bị trùng lặp dữ liệu
+    # Check for duplicate questions based on question text and relevant article IDs
     question_count = {}
     for item in data:
         if str(item['question']+item['relevant_articles'][0]['law_id']+item['relevant_articles'][0]['article_id']) in question_count:
