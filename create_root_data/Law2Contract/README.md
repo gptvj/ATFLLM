@@ -13,3 +13,6 @@ GeminiAddCaption.ipynb
 1. checksameid.py: check for duplicate data IDs
 2. xulysame.py: remove duplicates or merge relevant articles
 3. check_data.py: verify additional issues; if no errors, data is valid
+
+## Note:
+- We use the terms "muc", "dieu", and "khoan" to refer to hierarchical levels in legal documents. These correspond approximately to "chapter", "article", and "clause" in English.
