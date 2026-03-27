@@ -54,7 +54,7 @@ class RepLLaMA(EncoderModel):
 
 
 
-        # dang nhe -1 ma gio doi thanh -2
+        # debug note: changed from -1 to -2 (use last hidden state for query representation)
         q_hidden = qry_out.hidden_states[-1]
 
 
@@ -154,7 +154,7 @@ class RepLLaMA(EncoderModel):
     #     return model
     
 
-    # --------edit ---- dang tot nhat cho round 1 chay ban dau 
+    # --------edit ---- best configuration for round 1 initially
 
     @classmethod
     def build(

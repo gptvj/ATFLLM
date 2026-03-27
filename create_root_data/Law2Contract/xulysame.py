@@ -17,7 +17,7 @@ if __name__ == '__main__':
     data = readJsonFile(file_path)
     print(len(data))
     
-    # gom nhóm những item có cùng "question"
+    # Group items with the same "question"
     group_data = {}
     for item in data:
         question = item['question']

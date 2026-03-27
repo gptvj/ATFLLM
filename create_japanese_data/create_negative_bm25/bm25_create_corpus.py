@@ -13,7 +13,7 @@ def load_json(corpus_path):
 
 if __name__ == '__main__':
 
-    # Thiết lập tham số dòng lệnh
+    # Set up command-line arguments
     parser = argparse.ArgumentParser(description="Script to process legal corpus data")
     parser.add_argument("--data_dir", default="vjdatabase", type=str, 
                         help="Path to the directory containing the corpus data")
@@ -24,22 +24,22 @@ if __name__ == '__main__':
     parser.add_argument("--save_file", default="legal_dict.json", type=str, 
                         help="File where the processed data will be saved")
     
-    # Parse các tham số
+    # Parse the command-line arguments
     args = parser.parse_args()
 
-    # Tạo thư mục lưu trữ kết quả nếu chưa tồn tại
+    # Create the directory for saving results if it doesn't exist
     os.makedirs(args.save_dir, exist_ok=True)
 
-    # Đường dẫn đến file corpus
+    # Path to the corpus file
     corpus_path = os.path.join(args.data_dir, args.corpus_file)
 
-    # Đọc dữ liệu từ corpus
+    # Read the data from the corpus
     with open(corpus_path, encoding='utf-8') as file:
         data = json.load(file)
 
     save_dict = {}
 
-    # Duyệt qua các bài viết pháp lý và trích xuất thông tin
+    # Iterate through the legal articles and extract information
     count = 0
     for law_article in tqdm(data):
         law_id = law_article["law_id"]
@@ -50,10 +50,10 @@ if __name__ == '__main__':
             article_title = sub_article["title"]
             article_text = sub_article["text"]
 
-            # Tạo khóa concat_id duy nhất cho mỗi bài viết
+            # Create a unique concat_id key for each article
             concat_id = f"{law_id}_{article_id}"
             
-            # Nếu concat_id chưa có trong từ điển thì thêm mới
+            # If concat_id is not already in the dictionary, add it
             if concat_id not in save_dict:
                 count += 1
                 save_dict[concat_id] = {
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     print(f"Number of unique articles: {count}")
     print("Creating legal dict from raw data...")
 
-    # Lưu kết quả vào file JSON
+    # Save the processed data to a JSON file
     output_file = os.path.join(args.save_dir, args.save_file)
     with open(output_file, "w", encoding='utf-8') as outfile:
         json.dump(save_dict, outfile, ensure_ascii=False, indent=4)

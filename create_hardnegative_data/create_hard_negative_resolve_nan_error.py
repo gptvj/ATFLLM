@@ -19,17 +19,17 @@ test_ds_path = args.test_ds_path
 legal_ds_path = args.legal_ds_path
 rank_txt_path = args.rank_txt_path
 save_path = args.save_path
-n = args.n   # số lượng câu hard negative mỗi query
+n = args.n   # number of hard negative passages per query
 
-# Load lại test dataset
+# Load the test dataset and legal dataset
 test_ds = datasets.load_from_disk(test_ds_path)
 legal_ds = datasets.load_from_disk(legal_ds_path)
 
-# Chuyển legal_ds thành dict để tra cứu nhanh hơn
+# Convert legal_ds to a dictionary for faster lookup
 legal_dict = {doc_id: {"docid": doc_id, "title": title, "text": text}
               for doc_id, title, text in zip(legal_ds['docid'], legal_ds['title'], legal_ds['text'])}
 
-# Load top100_predict từ file
+# Load top100_predict from the file
 top100_predict = {}
 is_NaN_score = {}
 with open(rank_txt_path, "r", encoding='utf-8') as f: 
@@ -40,7 +40,7 @@ with open(rank_txt_path, "r", encoding='utf-8') as f:
         if query_id not in is_NaN_score:
             is_NaN_score[query_id] = True if score < 0 else False
 
-# Tạo hard negative dataset
+# Create a new dataset for hard negatives
 new_hard_negative_dataset = {
     "query_id": [],
     "query": [],
@@ -58,11 +58,11 @@ for i, query_id in enumerate(test_ds['query_id']):
     new_hard_negative_dataset['query'].append(test_ds['query'][i])
     new_hard_negative_dataset['positive_passages'].append(positive_passages)
     
-    # thêm hard negative passages
+    # Add hard negative passages
     list_pos_id = {pos['docid'] for pos in positive_passages}
     nega_this = []
     if is_NaN_score[query_id]: 
-        # lấy negative trong tập test_ds
+        # Get negative passages from the test dataset
         print("NaN")
         count_NaN += 1
         nega_this = [nega for nega in test_ds['negative_passages'][i]][:n]
@@ -74,11 +74,11 @@ for i, query_id in enumerate(test_ds['query_id']):
 
 print("count_NaN", count_NaN)
 
-# Lưu lại dataset và load bằng load_dataset
+# Save the new hard negative dataset to disk
 dataset = datasets.Dataset.from_dict(new_hard_negative_dataset)
 dataset.save_to_disk(save_path)
 
-# Load lại dataset
+# Load the dataset from disk to verify it was saved correctly
 dataset = datasets.load_from_disk(save_path)
 print(dataset)
 print("Done")

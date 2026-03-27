@@ -16,7 +16,7 @@ if __name__ == '__main__':
     # file_path = './LawContractAPI_full_after.json'
     data = readJsonFile(file_path)
     
-    # # xoá các phẩn tử có question rỗng
+    # # delete items with empty question
     # new_data = []
     # for item in data:
     #     if item['question'].strip() != '':
@@ -24,10 +24,10 @@ if __name__ == '__main__':
     #         item['dieu'] = item['dieu'].strip()
     #         item['question'] = item['question'].strip()
     #         new_data.append(item)
-    # print('Số lượng phần tử sau khi xoá:', len(new_data))
+    # print('Number of items after deletion:', len(new_data))
     # writeJsonFile('./LawContractAPI_full.json', new_data)
 
-    # số lượng question xuất hiện nhiều lần
+    # Count the number of questions that appear multiple times
     question_count = {}
     for item in data:
         if item['question'].strip() in question_count:
@@ -35,12 +35,12 @@ if __name__ == '__main__':
         else:
             question_count[item['question'].strip()] = 1
     
-    # # sắp xếp theo số lần xuất hiện
+    # # Sort by frequency of occurrence
     # question_count = dict(sorted(question_count.items(), key=lambda item: item[1], reverse=True))
     
-    # số lượng question xuất hiện nhiều hơn 2 lần
+    # Count the number of questions that appear more than 2 times
     question_filter = {k: v for k, v in question_count.items() if v >= 2}
-    print('Số lượng question xuất hiện nhiều hơn 2 lần:', len(question_filter))
+    print('Number of questions that appear more than 2 times:', len(question_filter))
 
     for k, v in question_filter.items():
         print(k, v)

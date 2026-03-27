@@ -216,7 +216,7 @@ class TrainDataset(Dataset):
         group_negatives = group['negatives']
         
         if len(group_positives) >1:
-            print('cu the group_pos = ', len(group_positives))
+            print('group_positives length = ', len(group_positives))
 
         if self.data_args.positive_passage_no_shuffle:
             pos_psg = group_positives[0]

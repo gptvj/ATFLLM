@@ -1,7 +1,7 @@
 from huggingface_hub import hf_hub_download
 import os
 
-# Thay "gptvj/vjdatabase" bằng tên dataset của bạn
+# Replace "gptvj/vjdatabase" with your dataset name
 REPO_ID = "gptvj/vjdatabase"
 FILE_NAMES = [
     "legal_corpus.json",
@@ -10,13 +10,13 @@ FILE_NAMES = [
     "validation_retrieval_data.json"
 ]
 
-# Đường dẫn thư mục đích
+# Target directory path
 LOCAL_DIR = "./vjdatabase"
 
-# Tạo thư mục nếu chưa tồn tại
+# Create the directory if it does not exist
 os.makedirs(LOCAL_DIR, exist_ok=True)
 
-# Vòng lặp tải tất cả file vào thư mục đích
+# Loop to download all files to the target directory
 for file_name in FILE_NAMES:
     file_path = hf_hub_download(
         repo_id=REPO_ID, 

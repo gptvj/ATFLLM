@@ -7,9 +7,8 @@ from rank_bm25 import BM25Plus
 from utils import bm25_tokenizer, load_json
 import argparse
 
-# Hàm chính
 if __name__ == '__main__':
-    # Thêm tham số dòng lệnh
+    # Add command-line arguments
     parser = argparse.ArgumentParser(description="Generate Positive and Negative Pairs for BM25 Retrieval")
     parser.add_argument("--top_pair", type=int, default=50, help="Top N relevant document pairs")
     parser.add_argument("--model_path", type=str, default="./temp/saved_model/bm25_Plus_model", help="Path to the BM25 model")
@@ -21,19 +20,19 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    # Đọc dữ liệu huấn luyện từ file JSON
+    # Load the training data from the JSON file
     train_path = os.path.join(args.data_path, args.train_file)
     training_items = load_json(train_path)["items"]
 
-    # Tải mô hình BM25 đã huấn luyện
+    # Load the pre-trained BM25 model
     with open(args.model_path, "rb") as bm_file:
         bm25 = pickle.load(bm_file)
 
-    # Tải các tham chiếu tài liệu đã lưu
+    # Load the saved document references
     with open(args.doc_refers_path, "rb") as doc_refer_file:
         doc_refers = pickle.load(doc_refer_file)
 
-    # Đọc dữ liệu tài liệu từ file JSON
+    # Load the document data from the JSON file
     doc_data = json.load(open(args.doc_data_path))
 
     save_pairs = []
@@ -43,14 +42,14 @@ if __name__ == '__main__':
         relevant_articles = item["relevant_articles"]
         actual_positive = len(relevant_articles)
 
-        # Tokenize câu hỏi
+        # Tokenize the question
         tokenized_query = bm25_tokenizer(question)
         doc_scores = bm25.get_scores(tokenized_query)
 
-        # Dự đoán các tài liệu liên quan nhất
+        # Predict the most relevant documents
         predictions = np.argpartition(doc_scores, len(doc_scores) - top_n)[-top_n:]
 
-        # Lưu các cặp tích cực (positive pairs)
+        # Save the positive pairs
         # for article in relevant_articles:
         #     save_dict = {}
         #     save_dict["question"] = question
@@ -62,7 +61,7 @@ if __name__ == '__main__':
         #         save_dict["relevant"] = 1
                 # save_pairs.append(save_dict)
 
-        # Lưu các cặp tiêu cực (negative pairs)
+        # Save the negative pairs
         for idx, idx_pred in enumerate(predictions):
             pred = doc_refers[idx_pred]
             check = 0
@@ -81,7 +80,7 @@ if __name__ == '__main__':
                 save_dict["relevant"] = 0
                 save_pairs.append(save_dict)
 
-    # Lưu cặp dữ liệu đã tạo vào thư mục chỉ định
+    # Save the generated pairs to the specified directory
     save_path = args.save_pair_path
     os.makedirs(save_path, exist_ok=True)
     with open(os.path.join(save_path, f"bm_25_pairs_training_top{top_n}"), "wb") as pair_file:

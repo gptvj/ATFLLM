@@ -7,7 +7,7 @@ from rank_bm25 import BM25Plus
 import argparse
 from utils import bm25_tokenizer
 
-# Định nghĩa lớp Config để chứa các tham số mặc định
+# Define a Config class to hold default parameters
 class Config:
     def __init__(self, data_path, save_bm25, top_k_bm25, bm25_k1, bm25_b):
         self.data_path = data_path
@@ -16,9 +16,8 @@ class Config:
         self.bm25_k1 = bm25_k1
         self.bm25_b = bm25_b
 
-# Hàm chính
 if __name__ == '__main__':
-    # Thêm tham số dòng lệnh
+    # Add command-line arguments
     parser = argparse.ArgumentParser(description="BM25 Retrieval Model")
     parser.add_argument("--data_path", type=str, default="vjdatabase", help="Path to the data directory")
     parser.add_argument("--corpus_file", type=str, default="legal_corpus.json", help="File corpus in the data directory")
@@ -31,17 +30,17 @@ if __name__ == '__main__':
     parser.add_argument("--num_eval", type=int, default=500, help="Number of evaluations")
     args = parser.parse_args()
 
-    # Khởi tạo Config với các tham số từ dòng lệnh
+    # Initialize Config with command-line parameters
     cfg = Config(args.data_path, args.save_bm25, args.top_k_bm25, args.bm25_k1, args.bm25_b)
 
     save_path = cfg.save_bm25
     os.makedirs(save_path, exist_ok=True)
 
-    # Đọc dữ liệu từ file corpus
+    # Read data from the corpus file
     corpus_path = os.path.join(cfg.data_path, args.corpus_file)
     data = json.load(open(corpus_path, encoding='utf-8'))
 
-    # Xử lý tài liệu nếu không có sẵn
+    # Process documents if not already available
     if args.load_docs:
         print("Processing documents...")
         documents = []
@@ -62,19 +61,19 @@ if __name__ == '__main__':
                 documents.append(tokens)
                 doc_refers.append([law_id, article_id, article_full])
         
-        # Lưu tài liệu đã xử lý vào pickle
+        # Save the processed documents to pickle files
         with open(os.path.join(save_path, "documents_manual"), "wb") as documents_file:
             pickle.dump(documents, documents_file)
         with open(os.path.join(save_path, "doc_refers_saved"), "wb") as doc_refer_file:
             pickle.dump(doc_refers, doc_refer_file)
     else:
-        # Nếu đã có tài liệu thì tải chúng từ pickle
+        # Load documents and document references from pickle files
         with open(os.path.join(save_path, "documents_manual"), "rb") as documents_file:
             documents = pickle.load(documents_file)
         with open(os.path.join(save_path, "doc_refers_saved"), "rb") as doc_refer_file:
             doc_refers = pickle.load(doc_refer_file)
 
-    # Đọc dữ liệu huấn luyện từ file JSON
+    # Load the training data from the JSON file
     train_path = os.path.join(cfg.data_path, args.train_file)
     data = json.load(open(train_path, encoding='utf-8'))
     items = data["items"]
@@ -83,10 +82,10 @@ if __name__ == '__main__':
     print(f"Number of documents: {len(documents)}")
     print(f"Number of document references: {len(doc_refers)}")
 
-    # Khởi tạo mô hình BM25
+    # Initialize the BM25 model
     bm25 = BM25Plus(documents, k1=cfg.bm25_k1, b=cfg.bm25_b)
     
-    # Lưu mô hình BM25 đã huấn luyện
+    # Save the trained BM25 model
     bm25_model_path = os.path.join(save_path, "bm25_Plus_model")
     with open(bm25_model_path, "wb") as bm_file:
         pickle.dump(bm25, bm_file)

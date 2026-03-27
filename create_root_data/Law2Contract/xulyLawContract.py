@@ -1,14 +1,13 @@
-# đọc file json
 import json
 import os
 
-# đọc file json
+# Read JSON file
 def readJsonFile(filePath):
     with open(filePath, 'r', encoding='utf-8') as file:
         data = json.load(file)
     return data
 
-# ghi file json
+# Write JSON file
 def writeJsonFile(filePath, data):
     with open(filePath, 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
